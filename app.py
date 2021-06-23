@@ -70,7 +70,7 @@ class PMDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     productId = db.Column(db.Integer, db.ForeignKey(Quantity.id))
     materialId = db.Column(db.Integer, db.ForeignKey(Quantity.id))
-    __table_args__ = ( UniqueConstraint('productId', 'materialId', name='product_detail_uc') , )
+    __table_args__ = ( db.UniqueConstraint('productId', 'materialId', name='product_detail_uc') , )
     # product_id = db.Column(db.Integer, db.ForeignKey('quantity.id'), nullable=False)
     # material_id = db.relationship('Quantity', backref=db.backref('product', lazy=True))
     def __init__(self, productId, materialId):

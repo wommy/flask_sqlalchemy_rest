@@ -31,56 +31,56 @@ quantity_schema = QuantitySchema()
 # products _schema = ProductSchema(many=True)
 
 # todo class/model
-# class Todo(db.Model):
-    # id = db.Column(db.Integer, primary_key=True)
-    # name = db.Column(db.String(100), unique=True)
-    # completed = db.Column(db.Boolean, default=False)
-    # def __init__(self, name, completed):
-        # self.name = name
-        # self.completed = completed
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True)
+    completed = db.Column(db.Boolean, default=False)
+    def __init__(self, name, completed):
+        self.name = name
+        self.completed = completed
 
 # todo schema
-# class TodoSchema(ma.Schema):
-    # class Meta:
-        # fields = ('id','name','completed')
-# todo_schema = TodoSchema()
+class TodoSchema(ma.Schema):
+    class Meta:
+        fields = ('id','name','completed')
+todo_schema = TodoSchema()
 # products _schema = ProductSchema(many=True)
 
 # log class/model
-# class Log(db.Model):
-    # id = db.Column(db.Integer, primary_key=True)
-    # name = db.Column(db.String(100), unique=True)
-    # published = db.Column(db.Boolean, default=True)
+class Log(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True)
+    published = db.Column(db.Boolean, default=True)
     # TODO default datetime.Now()
-    # createdAt = db.Column(db.DateTime)
-    # def __init__(self, name, published, createdAt):
-        # self.name = name
-        # self.published = published
-        # self.createdAt = createdAt
+    createdAt = db.Column(db.DateTime)
+    def __init__(self, name, published, createdAt):
+        self.name = name
+        self.published = published
+        self.createdAt = createdAt
 
 # log schema
-# class LogSchema(ma.Schema):
-    # class Meta:
-        # fields = ('id','name','published','createdAt')
-# log_schema = LogSchema()
+class LogSchema(ma.Schema):
+    class Meta:
+        fields = ('id','name','published','createdAt')
+log_schema = LogSchema()
 # products _schema = ProductSchema(many=True)
 
 # productMaterialsDetails class/model
-# class PMDetails(db.Model):
-    # id = db.Column(db.Integer, primary_key=True)
-    # productId = db.Column(db.Integer, ForeignKey(Quantity.id))
-    # materialId = db.Column(db.Integer, ForeignKey(Quantity.id))
+class PMDetails(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    productId = db.Column(db.Integer, db.ForeignKey(Quantity.id))
+    materialId = db.Column(db.Integer, db.ForeignKey(Quantity.id))
     # product_id = db.Column(db.Integer, db.ForeignKey('quantity.id'), nullable=False)
     # material_id = db.relationship('Quantity', backref=db.backref('product', lazy=True))
-    # def __init__(self, productId, materialId):
-        # self.productId = productId
-        # self.materialId = materialId
+    def __init__(self, productId, materialId):
+        self.productId = productId
+        self.materialId = materialId
 
 # productMaterialDetails schema
-# class PMDetailsSchema(ma.Schema):
-    # class Meta:
-        # fields = ('id','productId','materialId')
-# pmdetails_schema = PMDetailsSchema()
+class PMDetailsSchema(ma.Schema):
+    class Meta:
+        fields = ('id','productId','materialId')
+pmdetails_schema = PMDetailsSchema()
 #products_schema = ProductSchema(many=True)
 
 # create product

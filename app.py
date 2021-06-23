@@ -63,13 +63,14 @@ class QuantitySchema(ma.Schema):
     class Meta:
         fields = ('id','name','qty')
 quantity_schema = QuantitySchema()
-# products _schema = ProductSchema(many=True)
+quantities_schema = QuantitySchema(many=True)
 
 # productMaterialsDetails class/model
 class PMDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     productId = db.Column(db.Integer, db.ForeignKey(Quantity.id))
     materialId = db.Column(db.Integer, db.ForeignKey(Quantity.id))
+    __table_args__ = ( UniqueConstraint('productId', 'materialId', name='product_detail_uc') , )
     # product_id = db.Column(db.Integer, db.ForeignKey('quantity.id'), nullable=False)
     # material_id = db.relationship('Quantity', backref=db.backref('product', lazy=True))
     def __init__(self, productId, materialId):
@@ -80,8 +81,8 @@ class PMDetails(db.Model):
 class PMDetailsSchema(ma.Schema):
     class Meta:
         fields = ('id','productId','materialId')
-pmdetails_schema = PMDetailsSchema()
-#products_schema = ProductSchema(many=True)
+pmdetail_schema = PMDetailsSchema()
+pmdetails_schema = PMDetailsSchema(many=True)
 
 # populating database
 # @app.route('/populate/', methods=['POST'])
@@ -101,24 +102,48 @@ def app_quantity():
     db.session.commit()
     return quantity_schema.jsonify(new_product)
 
-# create product
-@app.route('/product', methods=['POST'])
-def app_product():
-    name = request.json['name']
-    description = request.json['description']
-    price = request.json['price']
-    qty = request.json['qty']
-    new_product = Product(name, description, price, qty)
+# get all quantities
+@app.route('/quantity/', methods=['GET'])
+def get_quantity():
+    all_products = Quantity.query.all()
+    result = quantities_schema.dump(all_products)
+    return jsonify(result)
+
+# creating a details
+@app.route('/detail/', methods=['POST'])
+def app_detail():
+    productId = request.json['productId']
+    materialId = request.json['materialId']
+    new_product = PMDetails(productId, materialId)
     db.session.add(new_product)
     db.session.commit()
-    return product_schema.jsonify(new_product)
+    return pmdetail_schema.jsonify(new_product)
+
+# get all details
+@app.route('/detail/', methods=['GET'])
+def get_details():
+    all_products = PMDetails.query.all()
+    result = pmdetails_schema.dump(all_products)
+    return jsonify(result)
+
+# create product
+# @app.route('/product', methods=['POST'])
+# def app_product():
+#     name = request.json['name']
+#     description = request.json['description']
+#     price = request.json['price']
+#     qty = request.json['qty']
+#     new_product = Product(name, description, price, qty)
+#     db.session.add(new_product)
+#     db.session.commit()
+#     return product_schema.jsonify(new_product)
 
 # get all products
-@app.route('/product', methods=['GET'])
-def get_products():
-    all_products = Product.query.all()
-    result = products_schema.dump(all_products)
-    return jsonify(result)
+# @app.route('/product', methods=['GET'])
+# def get_products():
+#     all_products = Product.query.all()
+#     result = products_schema.dump(all_products)
+#     return jsonify(result)
 
 # get single products
 @app.route('/product/<id>', methods=['GET'])

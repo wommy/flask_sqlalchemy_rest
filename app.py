@@ -14,22 +14,6 @@ db = SQLAlchemy(app)
 # init ma
 ma = Marshmallow(app)
 
-# quantity class/model
-class Quantity(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True)
-    qty = db.Column(db.Integer, default=0)
-    def __init__(self, name, qty):
-        self.name = name
-        self.qty = qty
-
-# quantities schema
-class QuantitySchema(ma.Schema):
-    class Meta:
-        fields = ('id','name','qty')
-quantity_schema = QuantitySchema()
-# products _schema = ProductSchema(many=True)
-
 # todo class/model
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -65,6 +49,22 @@ class LogSchema(ma.Schema):
 log_schema = LogSchema()
 # products _schema = ProductSchema(many=True)
 
+# quantity class/model
+class Quantity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True)
+    qty = db.Column(db.Integer, default=0)
+    def __init__(self, name, qty):
+        self.name = name
+        self.qty = qty
+
+# quantities schema
+class QuantitySchema(ma.Schema):
+    class Meta:
+        fields = ('id','name','qty')
+quantity_schema = QuantitySchema()
+# products _schema = ProductSchema(many=True)
+
 # productMaterialsDetails class/model
 class PMDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -83,6 +83,24 @@ class PMDetailsSchema(ma.Schema):
 pmdetails_schema = PMDetailsSchema()
 #products_schema = ProductSchema(many=True)
 
+# populating database
+# @app.route('/populate/', methods=['POST'])
+# def app_quantity():
+#     new_product = Quantity(name, qty)
+#     db.session.add(new_product)
+#     db.session.commit()
+#     return quantity_schema.jsonify(new_product)
+
+# creating a quantity
+@app.route('/quantity/', methods=['POST'])
+def app_quantity():
+    name = request.json['name']
+    qty = request.json['qty']
+    new_product = Quantity(name, qty)
+    db.session.add(new_product)
+    db.session.commit()
+    return quantity_schema.jsonify(new_product)
+
 # create product
 @app.route('/product', methods=['POST'])
 def app_product():
@@ -90,12 +108,9 @@ def app_product():
     description = request.json['description']
     price = request.json['price']
     qty = request.json['qty']
-
     new_product = Product(name, description, price, qty)
-
     db.session.add(new_product)
     db.session.commit()
-
     return product_schema.jsonify(new_product)
 
 # get all products
